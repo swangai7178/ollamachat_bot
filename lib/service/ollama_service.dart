@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 class OllamaService {
   Future<String> getResponse(String prompt) async {
+
   final url = Uri.parse('http://localhost:11434/v1/completions');
   final response = await http.post(
     url,

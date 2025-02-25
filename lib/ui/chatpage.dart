@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ollama_alexa/service/ollama_service.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -103,19 +104,50 @@ class _ChatPageState extends State<ChatPage> {
                 },
               ),
             ),
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                hintText: 'Enter your message',
-                suffixIcon: IconButton(
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: 'Enter your message',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.mic),
+                  onPressed: _startListening,
+                ),
+                IconButton(
                   icon: Icon(Icons.send),
                   onPressed: _sendPrompt,
                 ),
-              ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _startListening() async {
+    final speech = SpeechToText();
+    bool available = await speech.initialize();
+    if (available) {
+      speech.listen(onResult: (result) {
+        setState(() {
+          _controller.text = result.recognizedWords;
+        });
+      });
+    } else {
+      // Handle the error
+      setState(() {
+        _messages.add({'text': 'Speech recognition not available', 'sender': 'System'});
+      });
+    }
+  }
+
+  void _speak(String text) async {
+    // Implement text to voice functionality here
   }
 }
