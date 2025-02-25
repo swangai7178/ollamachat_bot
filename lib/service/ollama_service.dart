@@ -2,22 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class OllamaService {
-  
- Future<String> getResponse(String prompt) async {
-  final url = Uri.parse('http://localhost:11434/api/generate -d');
+  Future<String> getResponse(String prompt) async {
+  final url = Uri.parse('http://localhost:11434/v1/completions');
   final response = await http.post(
     url,
     headers: {
       'Content-Type': 'application/json',
     },
     body: jsonEncode({
-      'model': 'mistral', // Using the available model
+      'model': 'qwen:latest', // Using the available model
       'prompt': prompt,
-     
+      'max_tokens': 100,
     }),
   );
-
-  print(response.body);
 
   if (response.statusCode == 200) {
     final json = jsonDecode(response.body);
@@ -27,6 +24,5 @@ class OllamaService {
     throw Exception('Failed to get response from Ollama');
   }
 }
-
 
 }
