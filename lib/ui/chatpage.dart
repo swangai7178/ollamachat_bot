@@ -83,47 +83,55 @@ class _ChatPageState extends State<ChatPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  final isUser = message['sender'] == 'User';
-                  return Align(
-                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isUser ? Colors.blue[100] : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(message['text'] ?? ''),
-                    ),
-                  );
-                },
+        Expanded(
+          child: ListView.builder(
+            itemCount: _messages.length,
+            itemBuilder: (context, index) {
+          final message = _messages[index];
+          final isUser = message['sender'] == 'User';
+          return Align(
+            alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 5),
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+            color: isUser ? Colors.blue[100] : Colors.grey[300],
+            borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+            message['text'] ?? '',
+            style: TextStyle(
+              color: isUser ? Colors.black : Colors.black87,
+            ),
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your message',
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.mic),
-                  onPressed: _startListening,
-                ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _sendPrompt,
-                ),
-              ],
+          );
+            },
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: 'Enter your message',
+              border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+              ),
             ),
+          ),
+            ),
+            IconButton(
+          icon: Icon(Icons.mic),
+          onPressed: _startListening,
+            ),
+            IconButton(
+          icon: Icon(Icons.send),
+          onPressed: _sendPrompt,
+            ),
+          ],
+        ),
           ],
         ),
       ),
