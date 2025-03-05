@@ -61,6 +61,7 @@ class _ChatPageState extends State<ChatPage> {
 
     try {
       final result = await _ollamaService.getResponse(userMessage);
+      print(  result);
       setState(() {
         // Add the AI's response to the list
         _messages.add({'text': result, 'sender': 'AI'});

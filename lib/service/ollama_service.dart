@@ -2,27 +2,43 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class OllamaService {
-  Future<String> getResponse(String prompt) async {
+  Future getResponse(String prompt) async {
+ final client = http.Client();
+  final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
 
-  final url = Uri.parse('http://localhost:11434/v1/completions');
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      'model': 'qwen:latest', // Using the available model
-      'prompt': prompt,
-      'max_tokens': 100,
-    }),
-  );
+  final headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ',
+    'HTTP-Referer': '<YOUR_SITE_URL>', // Optional
+    'X-Title': '<YOUR_SITE_NAME>', // Optional
+  };
 
-  if (response.statusCode == 200) {
-    final json = jsonDecode(response.body);
-    // Extract the AI's response text
-    return json['choices'][0]['text'];
-  } else {
-    throw Exception('Failed to get response from Ollama');
+  final body = jsonEncode({
+    'model': 'deepseek/deepseek-r1-distill-llama-70b:free',
+    'messages': [
+      {'role': 'user', 'content': prompt},
+    ],
+  });
+
+  try {
+    final response = await client.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final meaningOfLife = data['choices'][0]['message']['content'];
+     
+      return meaningOfLife;
+      // You can now use the meaningOfLife variable in your Flutter UI
+    } else {
+      print('Error: ${response.statusCode}');
+      print(response.body);
+      // Handle the error appropriately in your Flutter UI
+    }
+  } catch (e) {
+    print('Exception: $e');
+    // Handle the exception appropriately in your Flutter UI
+  } finally {
+    client.close();
   }
 }
 
