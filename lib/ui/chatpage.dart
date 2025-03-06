@@ -14,6 +14,23 @@ class _ChatPageState extends State<ChatPage> {
   final _controller = TextEditingController();
   final _ollamaService = OllamaService();
   bool loading = false;
+  final ScrollController _scrollController = ScrollController();
+
+  
+void _scrollToBottom() {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    _scrollController
+    .addListener(() {
+      if (_scrollController.position.atEdge) {
+        if (_scrollController.position.pixels != 0) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
+      }
+    });
+  }});
+}
 
   final List<Map<String, String>> _messages = [];
 
@@ -21,6 +38,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _loadMessages();
+    _scrollToBottom();
   }
 
   // Load messages from SharedPreferences
@@ -91,27 +109,28 @@ class _ChatPageState extends State<ChatPage> {
           children: [
         Expanded(
           child: ListView.builder(
+            controller: _scrollController,
             itemCount: _messages.length,
             itemBuilder: (context, index) {
-          final message = _messages[index];
-          final isUser = message['sender'] == 'User';
-          return Align(
-            alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 5),
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-            color: isUser ? Colors.blue[100] : Colors.grey[300],
-            borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-            message['text'] ?? '',
-            style: TextStyle(
-              color: isUser ? Colors.black : Colors.black87,
+              final message = _messages[index];
+              final isUser = message['sender'] == 'User';
+              return Align(
+          alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 5),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isUser ? Colors.blue[100] : Colors.grey[300],
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: Text(
+              message['text'] ?? '',
+              style: TextStyle(
+                color: isUser ? Colors.black : Colors.black87,
               ),
             ),
-          );
+          ),
+              );
             },
           ),
         ),
