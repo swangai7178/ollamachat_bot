@@ -30,12 +30,11 @@ class OllamaService {
       return meaningOfLife;
       // You can now use the meaningOfLife variable in your Flutter UI
     } else {
-      print('Error: ${response.statusCode}');
-      print(response.body);
+  
       // Handle the error appropriately in your Flutter UI
     }
   } catch (e) {
-    print('Exception: $e');
+
     // Handle the exception appropriately in your Flutter UI
   } finally {
     client.close();
