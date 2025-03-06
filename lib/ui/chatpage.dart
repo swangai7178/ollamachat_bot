@@ -13,6 +13,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final _controller = TextEditingController();
   final _ollamaService = OllamaService();
+  bool loading = false;
 
   final List<Map<String, String>> _messages = [];
 
@@ -55,20 +56,24 @@ class _ChatPageState extends State<ChatPage> {
     setState(() {
       // Add the user's message to the list
       _messages.add({'text': userMessage, 'sender': 'User'});
+      loading = true;
     });
 
     _controller.clear();
 
     try {
+
       final result = await _ollamaService.getResponse(userMessage);
       print(  result);
       setState(() {
         // Add the AI's response to the list
+        loading = false;
         _messages.add({'text': result, 'sender': 'AI'});
       });
     } catch (e) {
       setState(() {
         _messages.add({'text': 'Error: $e', 'sender': 'AI'});
+        loading = false;
       });
     }
 
@@ -127,7 +132,7 @@ class _ChatPageState extends State<ChatPage> {
           icon: Icon(Icons.mic),
           onPressed: _startListening,
             ),
-            IconButton(
+            loading?Center(child: CircularProgressIndicator()):IconButton(
           icon: Icon(Icons.send),
           onPressed: _sendPrompt,
             ),
