@@ -16,21 +16,20 @@ class _ChatPageState extends State<ChatPage> {
   bool loading = false;
   final ScrollController _scrollController = ScrollController();
 
-  
-void _scrollToBottom() {
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    _scrollController
-    .addListener(() {
-      if (_scrollController.position.atEdge) {
-        if (_scrollController.position.pixels != 0) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-        }
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        _scrollController.addListener(() {
+          if (_scrollController.position.atEdge) {
+            if (_scrollController.position.pixels != 0) {
+              _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+            }
+          }
+        });
       }
     });
-  }});
-}
+  }
 
   final List<Map<String, String>> _messages = [];
 
@@ -80,9 +79,8 @@ void _scrollToBottom() {
     _controller.clear();
 
     try {
-
       final result = await _ollamaService.getResponse(userMessage);
-      print(  result);
+      print(result);
       setState(() {
         // Add the AI's response to the list
         loading = false;
@@ -102,61 +100,69 @@ void _scrollToBottom() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sam Bot')),
+      appBar: AppBar(
+        title: Text('Sam Bot'),
+        backgroundColor: Colors.deepPurple,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-        Expanded(
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: _messages.length,
-            itemBuilder: (context, index) {
-              final message = _messages[index];
-              final isUser = message['sender'] == 'User';
-              return Align(
-          alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isUser ? Colors.blue[100] : Colors.grey[300],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              message['text'] ?? '',
-              style: TextStyle(
-                color: isUser ? Colors.black : Colors.black87,
-              ),
-            ),
-          ),
-              );
-            },
-          ),
-        ),
-        Row(
-          children: [
             Expanded(
-          child: TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              hintText: 'Enter your message',
-              border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  final isUser = message['sender'] == 'User';
+                  return Align(
+                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: isUser ? Colors.blue[100] : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        message['text'] ?? '',
+                        style: TextStyle(
+                          color: isUser ? Colors.black : Colors.black87,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: 'Enter your message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.mic, color: Colors.deepPurple),
+                  onPressed: _startListening,
+                ),
+                loading
+                    ? Center(child: CircularProgressIndicator())
+                    : IconButton(
+                        icon: Icon(Icons.send, color: Colors.deepPurple),
+                        onPressed: _sendPrompt,
+                      ),
+              ],
             ),
-            IconButton(
-          icon: Icon(Icons.mic),
-          onPressed: _startListening,
-            ),
-            loading?Center(child: CircularProgressIndicator()):IconButton(
-          icon: Icon(Icons.send),
-          onPressed: _sendPrompt,
-            ),
-          ],
-        ),
           ],
         ),
       ),
