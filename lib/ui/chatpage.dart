@@ -110,29 +110,52 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             Expanded(
               child: ListView.builder(
-                controller: _scrollController,
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  final isUser = message['sender'] == 'User';
-                  return Align(
-                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                final isUser = message['sender'] == 'User';
+                return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                child: Row(
+                  mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  children: [
+                  if (!isUser)
+                    CircleAvatar(
+                    backgroundColor: Colors.deepPurple,
+                    child: Icon(Icons.person, color: Colors.white),
+                    ),
+                  SizedBox(width: 10),
+                  Flexible(
                     child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: isUser ? Colors.blue[100] : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        message['text'] ?? '',
-                        style: TextStyle(
-                          color: isUser ? Colors.black : Colors.black87,
-                        ),
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: isUser ? Colors.deepPurple[100] : Colors.grey[300],
+                      borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
+                      bottomRight: isUser ? Radius.zero : Radius.circular(15),
                       ),
                     ),
-                  );
-                },
+                    child: Text(
+                      message['text'] ?? '',
+                      style: TextStyle(
+                      color: isUser ? Colors.black : Colors.black87,
+                      ),
+                    ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  if (isUser)
+                    CircleAvatar(
+                    backgroundColor: Colors.deepPurple,
+                    child: Icon(Icons.person, color: Colors.white),
+                    ),
+                  ],
+                ),
+                );
+              },
               ),
             ),
             Row(
