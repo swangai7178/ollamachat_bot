@@ -8,7 +8,7 @@ class OllamaService {
 
   final headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer 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',
+    'Authorization': '',
     'HTTP-Referer': '<YOUR_SITE_URL>', // Optional
     'X-Title': '<YOUR_SITE_NAME>', // Optional
   };
